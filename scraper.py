@@ -6,6 +6,7 @@ import re
 from selenium import webdriver
 import time
 
+
 # scrape food list from site
 def get_json_dict():
     try:
@@ -40,18 +41,15 @@ def get_countries():
             out[index] = out[index].replace('\n', '')
         food_dict[c] = out
     print(food_dict)
+    f.close()
     
     
         
 
 def main():
-    food_dict = json.loads(get_json_dict())
-    dishes = food_dict["mainEntity"]["acceptedAnswer"]["text"]
-    food_pattern = "<br\/>.\d?\d?\d? ([^,]*)"
-    region_pattern = " (\w+) \(.{1,3}\)"
-    foods = re.findall(food_pattern, dishes)
-    regions = re.findall(region_pattern, dishes)
-    get_countries()
+    f = open("food_data.json")
+    d = json.load(f)
+
 
 if __name__ == "__main__":
     main()
