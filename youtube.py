@@ -11,10 +11,47 @@ import os
 import google_auth_oauthlib.flow
 import googleapiclient.discovery
 import googleapiclient.errors
+from shared_db import setUpDatabase
 
 scopes = ["https://www.googleapis.com/auth/youtube.force-ssl"]
 
-def main():
+#Average number of views for a "How To" Youtube Video
+AVG_VIEWS = 8332
+
+# Score is caluclated by dividing the video's views by the average views for 10 Youtube videos
+# on a "How To" Youtube Video ("https://tubularinsights.com/average-youtube-views/"). 
+#Then the amount of (likes/likes + dislikes) is added to the score 
+def calculate_score(views, likes, dislikes):
+    score = views/(AVG_VIEWS * 10)
+    if (likes + dislikes != 0):
+        score += (likes / (likes + dislikes))
+    return score
+
+#Create a Youtube table if it doesn't exist already
+def create_youtube_table(cur, conn):
+    cur.execute("CREATE TABLE IF NOT EXISTS Youtube (food TEXT PRIMARY KEY, score DOUBLE)")
+    conn.commit()
+
+# Get list of foods to search for on Youtube
+def gen_food_list(cur, conn):
+    cur.execute('''SELECT DISTINCT cuisine FROM Cuisines''')
+    country_list = cur.fetchall()
+    food_list = []
+    for country in country_list:
+        cur.execute('''SELECT food FROM Cuisines WHERE cuisine = \"{}\"
+        '''.format(country[0]))
+        foods = cur.fetchall()
+        cur.execute("SELECT food FROM Youtube")
+        foods_in_data = cur.fetchall()
+        #Duplicate check
+        for food in foods:
+            if (food not in foods_in_data):
+                food_list.append(food[0])
+                break
+    conn.commit()
+    return food_list
+
+def get_results(food_list):
     # Disable OAuthlib's HTTPS verification when running locally.
     # *DO NOT* leave this option enabled in production.
     # os.environ["OAUTHLIB_INSECURE_TRANSPORT"] = "1"
@@ -29,15 +66,55 @@ def main():
     credentials = flow.run_console()
     youtube = googleapiclient.discovery.build(
         api_service_name, api_version, credentials=credentials)
+    results_dic = {}
+    for food in food_list:
+        request = youtube.search().list(
+            part="snippet",
+            maxResults=15,
+            q="{} food".format(food)
+        )
+        try:
+            res = request.execute()
+        except:
+            print("Connection error, returning progress")
+            return results_dic
+        video_ids = []
+        #gets the video ids and stores them in video_ids
+        for result in res['items']:
+            if (result['id']['kind'] == 'youtube#video'):
+                video_ids.append(result['id']['videoId'])
+                if (len(video_ids) == 10):
+                    break
+        view_count = 0
+        like_count = 0
+        dislike_count = 0
+        for vid in video_ids:
+            request = youtube.videos().list(
+                part='statistics',
+                id=vid
+            )
+            try:
+                res = request.execute()
+            except:
+                print("Connection error, returning progress")
+                return results_dic
+            view_count += int(res['items'][0]['statistics']['viewCount'])
+            try:
+                like_count += int(res['items'][0]['statistics']['likeCount'])
+            except:
+                pass
+            try:
+                dislike_count += int(res['items'][0]['statistics']['dislikeCount'])
+            except:
+                pass
+        results_dic[food] = calculate_score(view_count, like_count, dislike_count)
+    return results_dic
 
-    request = youtube.search().list(
-        part="snippet",
-        maxResults=1,
-        q="Tim Tracker"
-    )
-    response = request.execute()
-
-    print(response)
-
+def main():
+    cur, conn = setUpDatabase("stabiao.db")
+    create_youtube_table(cur, conn)
+    food_list = gen_food_list(cur, conn)
+    print(get_results(food_list))
+    
 if __name__ == "__main__":
     main()

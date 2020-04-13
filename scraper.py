@@ -7,7 +7,7 @@ from selenium import webdriver
 import time
 
 
-# scrape food list from site
+# scrape food list from Tasteatlas.com
 def get_json_dict():
     try:
         req = requests.get("https://www.tasteatlas.com/tag/top100?orderby=location")

@@ -11,7 +11,7 @@ def setUpDatabase(db_name):
 
 def create_cuisines(data, cur, conn):
     cur.execute("DROP TABLE IF EXISTS Cuisines")
-    cur.execute("CREATE TABLE Cuisines (food TEXT, cuisine TEXT)")
+    cur.execute("CREATE TABLE Cuisines (food TEXT PRIMARY KEY, cuisine TEXT)")
     for cuisine in data.keys():
         for food in data[cuisine]:
             cur.execute("INSERT INTO Cuisines (food, cuisine) VALUES (?,?)", (food, cuisine))
