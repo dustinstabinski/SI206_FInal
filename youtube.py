@@ -27,9 +27,16 @@ def calculate_score(views, likes, dislikes):
         score += (likes / (likes + dislikes))
     return score
 
-#Create a Youtube table if it doesn't exist already
+# Create a Youtube table if it doesn't exist already
 def create_youtube_table(cur, conn):
     cur.execute("CREATE TABLE IF NOT EXISTS Youtube (food TEXT PRIMARY KEY, score DOUBLE)")
+    conn.commit()
+
+# Insert values into Youtube table where results is a dictionary
+# returned by the API
+def insert_into_youtube(cur, conn, results):
+    for food in results.keys():
+        cur.execute("INSERT INTO Youtube (food, score) VALUES (?, ?)", (food, results[food]))
     conn.commit()
 
 # Get list of foods to search for on Youtube
@@ -114,7 +121,9 @@ def main():
     cur, conn = setUpDatabase("stabiao.db")
     create_youtube_table(cur, conn)
     food_list = gen_food_list(cur, conn)
-    print(get_results(food_list))
+    results = get_results(food_list)
+    insert_into_youtube(cur, conn, results)
+
     
 if __name__ == "__main__":
     main()
