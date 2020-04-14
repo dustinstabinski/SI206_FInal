@@ -20,7 +20,7 @@ AVG_VIEWS = 8332
 
 # Score is caluclated by dividing the video's views by the average views for 10 Youtube videos
 # on a "How To" Youtube Video ("https://tubularinsights.com/average-youtube-views/"). 
-#Then the amount of (likes/likes + dislikes) is added to the score 
+#Then the amount of (likes/(likes + dislikes)) is added to the score (if applicable)
 def calculate_score(views, likes, dislikes):
     score = views/(AVG_VIEWS * 10)
     if (likes + dislikes != 0):
