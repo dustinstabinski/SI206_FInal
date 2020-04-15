@@ -58,14 +58,13 @@ def gen_food_list(cur, conn):
     return food_list
 
 def TwitterSearcher():
- """   
-    max_tweets = 2
+    max_tweets = 1
     searched_tweets = []
     last_id = -1
     while len(searched_tweets) < max_tweets:
         count = max_tweets - len(searched_tweets)
         try:
-            new_tweets = api.search(q=query, count=count, max_id=str(last_id - 1))
+            new_tweets = api.search(q='Panada', count=count, max_id=str(last_id - 1), result_type='popular')
             if not new_tweets:
                 break
             searched_tweets.extend(new_tweets)
@@ -74,16 +73,17 @@ def TwitterSearcher():
             # depending on TweepError.code, one may want to retry or wait
             # to keep things simple, we will give up on an error
             break
-"""
+    return searched_tweets
 
 
 
 def main():
-    cur, conn = setUpDatabase("stabiao.db")
-    create_twitter_table(cur, conn)
-    food_list = gen_food_list(cur, conn)
-    results = get_results(food_list)
-    insert_into_twitter(cur, conn, results)
+    # cur, conn = setUpDatabase("stabiao.db")
+    # create_twitter_table(cur, conn)
+    # food_list = gen_food_list(cur, conn)
+    # results = get_results(food_list)
+    # insert_into_twitter(cur, conn, results)
+    print(TwitterSearcher())
 
     
 if __name__ == "__main__":
