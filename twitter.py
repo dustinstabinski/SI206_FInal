@@ -16,7 +16,7 @@ access_token_secret = twitter_info.access_token_secret
 auth = OAuthHandler(consumer_key, consumer_secret)
 auth.set_access_token(access_token, access_token_secret)
 
-api = tweepy.API(auth, parser=tweepy.parsers.JSONParser()) #wtf does this do
+api = tweepy.API(auth) #wtf does this do
 
 #Average number of likes for a tweet
 AVG_LIKES = 1690.46
@@ -57,7 +57,24 @@ def gen_food_list(cur, conn):
     conn.commit()
     return food_list
 
-class TwitterSearcher():
+def TwitterSearcher():
+ """   
+    max_tweets = 2
+    searched_tweets = []
+    last_id = -1
+    while len(searched_tweets) < max_tweets:
+        count = max_tweets - len(searched_tweets)
+        try:
+            new_tweets = api.search(q=query, count=count, max_id=str(last_id - 1))
+            if not new_tweets:
+                break
+            searched_tweets.extend(new_tweets)
+            last_id = new_tweets[-1].id
+        except tweepy.TweepError as e:
+            # depending on TweepError.code, one may want to retry or wait
+            # to keep things simple, we will give up on an error
+            break
+"""
 
 
 
