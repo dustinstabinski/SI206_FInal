@@ -28,6 +28,12 @@ def get_food_genre_scores(cur, conn):
         else:
             print("Error duplicate found")
             exit(1)
+    # Write data to a file
+    f = open("Youtube_Results.txt", 'w')
+    f.write("Average Youtube score for each Country\n")
+    for key in scores_dic.keys():
+        f.write(str(key) + ': ' + str(scores_dic[key]) + '\n')
+    f.close()
     return scores_dic
 
 def plot(data):
