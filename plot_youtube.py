@@ -44,7 +44,7 @@ def plot(data):
     plt.xlabel('Average Score', fontsize=15)
     #plt.ylabel('Cuisine', fontsize=15)
     #plt.xticks(range(len(x_axis)), x_axis, fontsize=10, rotation=75)
-    plt.title('Average Popularity Score for Cuisines around the World')
+    plt.title('Average Youtube Popularity Score for Cuisines around the World')
     for index, value in enumerate(y_axis):
         plt.text(value, index, str(round(value, 1)))
     manager = plt.get_current_fig_manager()
