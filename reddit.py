@@ -56,6 +56,8 @@ def search_reddit(food_list):
     comment_count = 0
 
     for food in food_list:
+        like_count = 0
+        comment_count = 0
 
         top_subreddit = subreddit.search(food ,limit = 10)
 
