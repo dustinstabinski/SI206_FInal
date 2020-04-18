@@ -4,7 +4,6 @@ SECRET = 'kgkQQbhIR4eqmE9xwgdMLk9d'
 
 # Sample Python code for youtube.search.list
 # See instructions for running these code samples locally:
-# https://developers.google.com/explorer-help/guides/code_samples#python
 
 import os
 
