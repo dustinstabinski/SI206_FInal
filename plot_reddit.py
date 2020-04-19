@@ -14,7 +14,7 @@ def average(scores):
         total += score[0]
     return total / len(scores)
 
-def get_food_genre_scores(cur, conn):
+def get_food_genre_scores_r(cur, conn):
     cur.execute('''SELECT DISTINCT cuisine FROM Cuisines''')
     country_list = cur.fetchall()
     scores_dic = {}
@@ -60,7 +60,7 @@ def plot(data):
 
 def main():
     cur, conn = setUpDatabase('stabiao.db')
-    data = get_food_genre_scores(cur, conn)
+    data = get_food_genre_scores_r(cur, conn)
     plot(data)
 
 

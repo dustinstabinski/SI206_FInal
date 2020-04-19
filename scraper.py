@@ -23,7 +23,6 @@ def get_countries():
     num = 0
     # list of countries that were found in database
     countries = ['Argentina', 'Canada', 'China', 'Croatia', 'Czech-Republic', 'France', 'Germany', 'Greece', 'Hungary', 'India', 'Indonesia', 'Italy', 'Japan', 'Mexico', 'Netherlands', 'Peru', 'Philippines', 'Poland', 'Portugal', 'Romania', 'Spain', 'Sweden', 'Thailand', 'Turkey', 'United-Kingdom', 'USA', 'Vietnam']
-    countries = ['Turkey', 'Vietnam', 'usa']
     food_dict = {}
     for c in countries:
         try:
